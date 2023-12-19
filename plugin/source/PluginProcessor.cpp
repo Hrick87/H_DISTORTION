@@ -125,26 +125,59 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 {
     juce::ignoreUnused(midiMessages);
 
-    buffer.clear();
-
-    juce::MidiBuffer processedMidi;
-
-    for (const auto metadata : midiMessages)
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
     {
-        auto message = metadata.getMessage();
-        const auto time = metadata.samplePosition;
+        auto *channelData = buffer.getWritePointer(channel);
 
-        if (message.isNoteOn())
+        for (int i = 0; i < buffer.getNumSamples(); ++i)
         {
-            message = juce::MidiMessage::noteOn(message.getChannel(),
-                                                message.getNoteNumber(),
-                                                (juce::uint8)noteOnVelocity);
+
+            auto input = channelData[i];
+            auto cleanOut = channelData[i];
+
+            if (menuChoice == 1)
+            // Hard Clipping
+            {
+                if (input > thresh)
+                {
+                    input = thresh;
+                }
+                else if (input < -thresh)
+                {
+                    input = -thresh;
+                }
+                else
+                {
+                    input = input;
+                }
+            }
+            if (menuChoice == 2)
+            // Soft Clipping Exp
+            {
+                if (input > thresh)
+                {
+                    input = 1.0f - expf(-input);
+                }
+                else
+                {
+                    input = -1.0f + expf(input);
+                }
+            }
+            if (menuChoice == 3)
+            // Half-Wave Rectifier
+            {
+                if (input > thresh)
+                {
+                    input = input;
+                }
+                else
+                {
+                    input = 0;
+                }
+            }
+            channelData[i] = ((1 - mix) * cleanOut) + (mix * input);
         }
-
-        processedMidi.addEvent(message, time);
     }
-
-    midiMessages.swapWith(processedMidi);
 }
 
 //==============================================================================

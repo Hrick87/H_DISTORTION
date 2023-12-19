@@ -14,15 +14,24 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     distortionGain.addListener(this);
 
     // these define the parameters of our slider object
-    distortionGain.setSliderStyle(juce::Slider::LinearBarVertical);
-    distortionGain.setRange(0.0, 127.0, 1.0);
-    distortionGain.setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 0);
-    distortionGain.setPopupDisplayEnabled(true, false, this);
-    distortionGain.setTextValueSuffix(" Volume");
-    distortionGain.setValue(1.0);
+    juce::String options[3] = {"Hard Clip", "Soft Clip", "Half-Wave Rect"};
 
-    // this function adds the slider to the editor
-    addAndMakeVisible(&distortionGain);
+    disChoice.addItem(options[0], 1);
+    disChoice.addItem(options[1], 2);
+    disChoice.addItem(options[2], 3);
+    disChoice.addListener(this);
+    disChoice.setSelectedId(1);
+
+    // this function adds the choice to the editor
+    addAndMakeVisible(&disChoice); // 1
+
+    addAndMakeVisible(&Threshold);
+    Threshold.setRange(0.0f, 1.0f, 0.001);
+    Threshold.addListener(this);
+
+    addAndMakeVisible(&Mix);
+    Mix.setRange(0.0f, 1.0f, 0.001);
+    Mix.addListener(this);
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
@@ -35,7 +44,9 @@ void AudioPluginAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
     // sets the position and size of the slider with arguments (x, y, width, height)
-    distortionGain.setBounds(40, 30, 20, getHeight() - 60);
+    disChoice.setBounds(50, 50, 200, 50); // 2
+    Threshold.setBounds(50, 100, 200, 50);
+    Mix.setBounds(50, 150, 200, 50);
 }
 
 void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
@@ -48,11 +59,21 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics &g)
 
     // set the font size and draw text to the screen
     g.setFont(15.0f);
+}
 
-    g.drawFittedText("Distortion Gain", 0, 0, getWidth(), 30, juce::Justification::centred, 1);
+void AudioPluginAudioProcessorEditor::comboBoxChanged(juce::ComboBox *comboBox)
+{
+    processorRef.menuChoice = comboBox->getSelectedId();
 }
 
 void AudioPluginAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
 {
-    processorRef.noteOnVelocity = distortionGain.getValue();
+    if (&Mix == slider)
+    {
+        processorRef.mix = Mix.getValue();
+    }
+    if (&Threshold == slider)
+    {
+        processorRef.thresh = Threshold.getValue();
+    }
 }
