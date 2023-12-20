@@ -10,9 +10,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     // editor's size to whatever you need it to be.
     setSize(200, 200);
 
-    // add the listener to the slider
-    distortionGain.addListener(this);
-
     // these define the parameters of our slider object
     juce::String options[3] = {"Hard Clip", "Soft Clip", "Half-Wave Rect"};
 
@@ -26,10 +23,13 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     addAndMakeVisible(&disChoice); // 1
 
     addAndMakeVisible(&Threshold);
+    Threshold.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    // Threshold.setRotaryParameters(-1 * (4 * juce::MathConstants<float>::pi) / 3, (5 * juce::MathConstants<float>::pi) / 6, true);
     Threshold.setRange(0.0f, 1.0f, 0.001);
     Threshold.addListener(this);
 
     addAndMakeVisible(&Mix);
+    Mix.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     Mix.setRange(0.0f, 1.0f, 0.001);
     Mix.addListener(this);
 }
