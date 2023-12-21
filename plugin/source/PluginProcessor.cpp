@@ -175,7 +175,7 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
                     input = 0;
                 }
             }
-            channelData[i] = ((1 - mix) * cleanOut) + (mix * input);
+            channelData[i] = ((1 - mix) * cleanOut) + (mix * input) + (post_gain);
         }
     }
 }

@@ -21,6 +21,10 @@ private:
     void sliderValueChanged(juce::Slider *slider) override;
     AudioPluginAudioProcessor &processorRef;
     juce::Slider Threshold;
+    juce::Label ThreshLabel;
     juce::Slider Mix;
+    juce::Label MixLabel;
+    juce::Slider PostGain;
+    juce::Label PostGainLabel;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

@@ -41,6 +41,7 @@ public:
     int menuChoice;
     float thresh = 0.0f;
     float mix = 0.0f;
+    float post_gain = 0.0f;
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
